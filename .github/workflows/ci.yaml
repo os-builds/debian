@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ '*' ]
+  pull_request:
+  schedule:
+    - cron: '30 2 */10 * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:latest
+      volumes:
+        - /proc:/proc
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set environment variables
+        run: |
+          echo REPO=$(pwd) >> ${GITHUB_ENV}
+          echo LB=$(pwd)/live-build >> ${GITHUB_ENV}
+
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y live-build git
+
+      - name: Create live-build directory structure
+        run: |
+          mkdir ${LB}
+          cd ${LB}
+          lb config
+
+      - name: Adjust live-build configuration
+        run: |
+          cp -vr ${REPO}/config/* ${LB}/config/
+
+      - name: Building
+        run: |
+          cd ${LB}
+          lb build
+
+      - name: Uploading ISO 
+        uses: actions/upload-artifact@v3
+        with:
+          name: debian-amd64.iso
+          path: ${{ env.LB }}/live-image-amd64.hybrid.iso
+          if-no-files-found: error
+
+      - name: Mount ISO to extract required files (filesystem.squashfs, vmlinuz, initrd.img)
+        run: |
+          mkdir ${LB}/tmp/
+          mount -o loop ${LB}/live-image-amd64.hybrid.iso ${LB}/tmp
+
+      - name: Uploading vmlinuz
+        uses: actions/upload-artifact@v3
+        with:
+          name: vmlinuz
+          path: |
+            ${{ env.LB }}/tmp/live/vmlinuz
+          if-no-files-found: error
+
+      - name: Uploading initrd.img
+        uses: actions/upload-artifact@v3
+        with:
+          name: initrd.img
+          path: |
+            ${{ env.LB }}/tmp/live/initrd.img
+          if-no-files-found: error
+
+      - name: Uploading filesystem.squashfs
+        uses: actions/upload-artifact@v3
+        with:
+          name: filesystem.squashfs
+          path: |
+            ${{ env.LB }}/tmp/live/filesystem.squashfs
+          if-no-files-found: error
+
