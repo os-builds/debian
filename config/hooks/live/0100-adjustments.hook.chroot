@@ -1,0 +1,11 @@
+#!/bin/bash
+
+chmod +x /root/.start.sh
+
+cat <<_EOF >> /root/.bashrc
+
+if tty | grep -q tty1; then
+  bash /root/.start.sh
+fi
+
+_EOF
