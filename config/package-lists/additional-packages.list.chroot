@@ -1,3 +1,6 @@
 syslinux
 syslinux-efi
 cryptsetup
+wget
+curl
+dialog
