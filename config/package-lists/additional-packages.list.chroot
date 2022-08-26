@@ -1,7 +1,10 @@
+# general requirements
+wget
+curl
+
+# required packages for live os install script
 syslinux
 syslinux-efi
 extlinux
 cryptsetup
-wget
-curl
 dialog
