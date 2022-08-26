@@ -1,5 +1,6 @@
 syslinux
 syslinux-efi
+extlinux
 cryptsetup
 wget
 curl
