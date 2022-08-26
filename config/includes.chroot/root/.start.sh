@@ -4,7 +4,7 @@ function switch_exists {
 }
 
 function switch_value {
-  grep -Po "(?<=${1}=)\S*)" /proc/cmdline
+  grep -Po "(?<=${1}=)\S*" /proc/cmdline
 }
 ### END OF FUNCTION SECTION ###
 
