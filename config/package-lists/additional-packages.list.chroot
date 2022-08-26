@@ -8,3 +8,5 @@ syslinux-efi
 extlinux
 cryptsetup
 dialog
+fdisk
+parted
