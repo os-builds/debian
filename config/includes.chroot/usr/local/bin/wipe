@@ -1,6 +1,15 @@
 #!/bin/bash
 
+#################################
+#                               #
+#     Secure Shell Networks     #
+#          Wipe System          #
+#                               #
+#################################
+
 ataPassword="irrelevant"
+
+source /root/.functions.sh
 
 # check if required packages are installed
 dpkg -s hdparm &> /dev/null || (printe "Unable to locate hdparm, exiting..."; exit 1)
