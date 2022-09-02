@@ -10,3 +10,8 @@ cryptsetup
 dialog
 fdisk
 parted
+
+# required packages for wipe script
+hdparm
+dialog
+dc3dd
